@@ -377,8 +377,11 @@ public class LineChartRenderer extends LineRadarRenderer {
 
         } else { // only one color per dataset
 
-            if (mLineBuffer.length < Math.max((entryCount) * pointsPerEntryPair, pointsPerEntryPair) * 2)
-                mLineBuffer = new float[Math.max((entryCount) * pointsPerEntryPair, pointsPerEntryPair) * 4];
+//            if (mLineBuffer.length < Math.max((entryCount) * pointsPerEntryPair, pointsPerEntryPair) * 2)
+            /**
+             * 修复当前显示区域有NaN的时候无法显示线的问题，也可以设置colors，把NaN部分设置为透明色，但是好像其他颜色无效
+             */
+            mLineBuffer = new float[Math.max((entryCount) * pointsPerEntryPair, pointsPerEntryPair) * 4];
 
             Entry e1, e2;
 
@@ -393,6 +396,20 @@ public class LineChartRenderer extends LineRadarRenderer {
                     e2 = dataSet.getEntryForIndex(x);
 
                     if (e1 == null || e2 == null) continue;
+
+                    if (Float.isNaN(e2.getY()) || Float.isNaN(e1.getY())) {
+                        j++;
+                        j++;
+                        if (isDrawSteppedEnabled) {
+                            j++;
+                            j++;
+                            j++;
+                            j++;
+                        }
+                        j++;
+                        j++;
+                        continue;
+                    }
 
                     mLineBuffer[j++] = e1.getX();
                     mLineBuffer[j++] = e1.getY() * phaseY;
@@ -578,8 +595,8 @@ public class LineChartRenderer extends LineRadarRenderer {
                         Utils.drawImage(
                                 c,
                                 icon,
-                                (int)(x + iconsOffset.x),
-                                (int)(y + iconsOffset.y),
+                                (int) (x + iconsOffset.x),
+                                (int) (y + iconsOffset.y),
                                 icon.getIntrinsicWidth(),
                                 icon.getIntrinsicHeight());
                     }

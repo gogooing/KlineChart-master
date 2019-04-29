@@ -3,6 +3,7 @@ package com.loro.klinechart.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -54,7 +55,7 @@ public class MyCombinedChart extends CombinedChart {
     @Override
     protected void drawMarkers(Canvas canvas) {
         // if there is no marker view or drawing marker is disabled
-        if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight())
+        if (!isDrawMarkersEnabled() || !valuesToHighlight())
             return;
 
         for (int i = 0; i < mIndicesToHighlight.length; i++) {
@@ -78,12 +79,6 @@ public class MyCombinedChart extends CombinedChart {
             // check bounds
             if (!mViewPortHandler.isInBounds(pos[0], pos[1]))
                 continue;
-
-            // callbacks to update the content
-            mMarker.refreshContent(e, highlight);
-
-            // draw the marker
-//            mMarker.draw(canvas, pos[0], pos[1]);
 
             if (null != myMarkerViewH) {
                 myMarkerViewH.refreshContent(e, mIndicesToHighlight[i]);

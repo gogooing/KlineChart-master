@@ -14,8 +14,7 @@ import java.util.List;
 /**
  * Created by Philipp Jahoda on 21/07/15.
  */
-public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> implements IHighlighter
-{
+public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> implements IHighlighter {
 
     /**
      * instance of the data-provider
@@ -34,12 +33,33 @@ public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> 
     @Override
     public Highlight getHighlight(float x, float y) {
 
+        float yValue = getYValue(y);
+
         MPPointD pos = getValsForTouch(x, y);
         float xVal = (float) pos.x;
         MPPointD.recycleInstance(pos);
 
         Highlight high = getHighlightForX(xVal, x, y);
+
+        high.setTouchY(y);
+        high.setTouchYValue(yValue);
+
         return high;
+    }
+
+    /**
+     * 获取Y坐标对应的值
+     *
+     * @param y
+     * @return
+     */
+    protected float getYValue(float y) {
+
+        float[] pts = new float[2];
+        pts[1] = y;
+
+        mChart.getTransformer(YAxis.AxisDependency.LEFT).pixelsToValue(pts);
+        return pts[1];
     }
 
     /**
@@ -69,7 +89,7 @@ public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> 
 
         List<Highlight> closestValues = getHighlightsAtXValue(xVal, x, y);
 
-        if(closestValues.isEmpty()) {
+        if (closestValues.isEmpty()) {
             return null;
         }
 
@@ -166,8 +186,7 @@ public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> 
         if (entries.size() == 0) {
             // Try to find closest x-value and take all entries for that x-value
             final Entry closest = set.getEntryForXValue(xVal, Float.NaN, rounding);
-            if (closest != null)
-            {
+            if (closest != null) {
                 //noinspection unchecked
                 entries = set.getEntriesForXValue(closest.getX());
             }

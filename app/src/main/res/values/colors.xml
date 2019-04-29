@@ -34,6 +34,7 @@
     <color name="ma10">#B99C7A</color>
     <color name="ma20">#3C7193</color>
     <color name="ma30">#7F9976</color>
+    <color name="ma60">#E7B448</color>
 
     <color name="increasing_color">#CD2626</color>
     <color name="decreasing_color">#006400</color>

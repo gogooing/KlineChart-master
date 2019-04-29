@@ -462,7 +462,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
 
             mHighlightPaint.setColor(set.getHighLightColor());
             mHighlightPaint.setAlpha(set.getHighLightAlpha());
-
+            mHighlightPaint.setStrokeWidth(Utils.convertDpToPixel(1f));
             boolean isStack = (high.getStackIndex() >= 0  && e.isStacked()) ? true : false;
 
             final float y1;

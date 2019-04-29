@@ -134,4 +134,8 @@ public abstract class ValueFormatter implements IAxisValueFormatter, IValueForma
         return getFormattedValue(candleEntry.getHigh());
     }
 
+    public String getCandleLabelByValue(float valut) {
+        return getFormattedValue(valut);
+    }
+
 }

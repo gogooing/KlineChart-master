@@ -4,11 +4,18 @@ import android.graphics.Paint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import com.github.mikephil.charting.charts.Chart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.CoupleChartGestureListener
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.loro.klinechart.bean.KLineEntity
+import com.loro.klinechart.chart.MyBottomMarkerView
+import com.loro.klinechart.chart.MyHMarkerView
+import com.loro.klinechart.chart.MyLeftMarkerView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.ArrayList
 
@@ -25,6 +32,12 @@ class MainActivity : AppCompatActivity() {
     private var mMa20Datas = mutableListOf<Entry>()
     private var mMa30Datas = mutableListOf<Entry>()
     private var mMa60Datas = mutableListOf<Entry>()
+
+    private var mMa5Colors = mutableListOf<Int>()
+    private var mMa10Colors = mutableListOf<Int>()
+    private var mMa20Colors = mutableListOf<Int>()
+    private var mMa30Colors = mutableListOf<Int>()
+    private var mMa60Colors = mutableListOf<Int>()
     private var mXVals = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +45,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initKLine()
+        setMarkerView()
+        setChartListener()
         getData()
+
     }
 
     private fun initKLine() {
@@ -94,6 +110,51 @@ class MainActivity : AppCompatActivity() {
         klineChart.animateXY(2000, 2000) //在x轴和y轴上绘制/渲染图表的动画的时间
     }
 
+    private fun setChartListener() {
+        klineChart.onChartGestureListener = CoupleChartGestureListener(klineChart, arrayOf<Chart<*>>(volumeChart))
+        klineChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onNothingSelected() {
+
+            }
+
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+//                val highlight = Highlight(h!!.x, h.touchYValue, h.dataIndex, h.dataSetIndex)
+//
+//                val touchY = h.getTouchY() - mChartKline.getHeight()
+//                val h1 = mChartVolume.getHighlightByTouchPoint(h.getXIndex(), touchY)
+//                highlight.setTouchY(touchY)
+//                if (null == h1) {
+//                    highlight.setTouchYValue(0f)
+//                } else {
+//                    highlight.setTouchYValue(h1!!.getTouchYValue())
+//                }
+//                mChartVolume.highlightValues(arrayOf<Highlight>(highlight))
+//
+//                val highlight2 = Highlight(h.getXIndex(), h.getValue(), h.getDataIndex(), h.getDataSetIndex())
+//
+//                val touchY2 = h.getTouchY() - mChartKline.getHeight() - mChartVolume.getHeight()
+//                val h2 = mChartCharts.getHighlightByTouchPoint(h.getXIndex(), touchY2)
+//                highlight2.setTouchY(touchY2)
+//                if (null == h2) {
+//                    highlight2.setTouchYValue(0f)
+//                } else {
+//                    highlight2.setTouchYValue(h2!!.getTouchYValue())
+//                }
+//                mChartCharts.highlightValues(arrayOf<Highlight>(highlight2))
+//
+//                updateText(e.getXIndex())
+            }
+
+        })
+    }
+
+    private fun setMarkerView() {
+//        val leftMarkerView = MyLeftMarkerView(this@MainActivity, R.layout.markerview_kline)
+//        val hMarkerView = MyHMarkerView(this@MainActivity, R.layout.markerview_line)
+//        val bottomMarkerView = MyBottomMarkerView(this@MainActivity, R.layout.markerview_kline)
+//        klineChart.setMarker(leftMarkerView, bottomMarkerView, hMarkerView, mDatas)
+    }
+
     private fun getData() {
         mDatas = DataRequest.getALL(this@MainActivity)
         mKlineDatas.clear()
@@ -118,6 +179,52 @@ class MainActivity : AppCompatActivity() {
             mMa20Datas.add(Entry(i.toFloat(), mDatas[i].mA20Price))
             mMa30Datas.add(Entry(i.toFloat(), mDatas[i].mA30Price))
             mMa60Datas.add(Entry(i.toFloat(), mDatas[i].mA60Price))
+
+            when (i) {
+                in 0 until 5 -> {
+                    mMa5Colors.add(R.color.transparent)
+                    mMa10Colors.add(R.color.transparent)
+                    mMa20Colors.add(R.color.transparent)
+                    mMa30Colors.add(R.color.transparent)
+                    mMa60Colors.add(R.color.transparent)
+                }
+                in 5 until 10 -> {
+                    mMa5Colors.add(R.color.ma5)
+                    mMa10Colors.add(R.color.transparent)
+                    mMa20Colors.add(R.color.transparent)
+                    mMa30Colors.add(R.color.transparent)
+                    mMa60Colors.add(R.color.transparent)
+                }
+                in 10 until 20 -> {
+                    mMa5Colors.add(R.color.ma5)
+                    mMa10Colors.add(R.color.ma10)
+                    mMa20Colors.add(R.color.transparent)
+                    mMa30Colors.add(R.color.transparent)
+                    mMa60Colors.add(R.color.transparent)
+                }
+                in 20 until 30 -> {
+                    mMa5Colors.add(R.color.ma5)
+                    mMa10Colors.add(R.color.ma10)
+                    mMa20Colors.add(R.color.ma20)
+                    mMa30Colors.add(R.color.transparent)
+                    mMa60Colors.add(R.color.transparent)
+                }
+                in 30 until 60 -> {
+                    mMa5Colors.add(R.color.ma5)
+                    mMa10Colors.add(R.color.ma10)
+                    mMa20Colors.add(R.color.ma20)
+                    mMa30Colors.add(R.color.ma30)
+                    mMa60Colors.add(R.color.transparent)
+                }
+                else -> {
+                    mMa5Colors.add(R.color.ma5)
+                    mMa10Colors.add(R.color.ma10)
+                    mMa20Colors.add(R.color.ma20)
+                    mMa30Colors.add(R.color.ma30)
+                    mMa60Colors.add(R.color.ma60)
+                }
+            }
+
             mXVals.add(mDatas[i].date ?: "")
         }
         if (!mDatas.isNullOrEmpty()) {
@@ -154,16 +261,16 @@ class MainActivity : AppCompatActivity() {
         set.axisDependency = YAxis.AxisDependency.LEFT
         set.shadowWidth = 1f
         set.valueTextSize = 10f
-        set.decreasingColor = resources.getColor(R.color.decreasing_color)//设置开盘价高于收盘价的颜色
+        set.decreasingColor = ContextCompat.getColor(this@MainActivity, R.color.decreasing_color)//设置开盘价高于收盘价的颜色
         set.decreasingPaintStyle = Paint.Style.FILL
-        set.increasingColor = resources.getColor(R.color.increasing_color)//设置开盘价地狱收盘价的颜色
-        set.increasingPaintStyle = Paint.Style.STROKE
-        set.neutralColor = resources.getColor(R.color.decreasing_color)//设置开盘价等于收盘价的颜色
+        set.increasingColor = ContextCompat.getColor(this@MainActivity, R.color.increasing_color)//设置开盘价地狱收盘价的颜色
+        set.increasingPaintStyle = Paint.Style.FILL
+        set.neutralColor = ContextCompat.getColor(this@MainActivity, R.color.increasing_color)//设置开盘价等于收盘价的颜色
         set.shadowColorSameAsCandle = true
         set.highlightLineWidth = 1f
-        set.highLightColor = resources.getColor(R.color.marker_line_bg)
+        set.highLightColor = ContextCompat.getColor(this@MainActivity, R.color.marker_line_bg)
         set.setDrawValues(true)
-        set.valueTextColor = resources.getColor(R.color.marker_text_bg)
+        set.valueTextColor = ContextCompat.getColor(this@MainActivity, R.color.marker_text_bg)
 
         candleData.addDataSet(set)
         return candleData
@@ -186,7 +293,7 @@ class MainActivity : AppCompatActivity() {
         if (ma == 5) {
             lineDataSetMa.isHighlightEnabled = true
             lineDataSetMa.setDrawHorizontalHighlightIndicator(false)
-            lineDataSetMa.highLightColor = resources.getColor(R.color.marker_line_bg)
+            lineDataSetMa.highLightColor = ContextCompat.getColor(this@MainActivity, R.color.marker_line_bg)
         } else {/*此处必须得写*/
             lineDataSetMa.isHighlightEnabled = false
         }
@@ -195,7 +302,14 @@ class MainActivity : AppCompatActivity() {
             5 -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma5)
             10 -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma10)
             20 -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma20)
-            else -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma30)
+            30 -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma30)
+            else -> lineDataSetMa.color = ContextCompat.getColor(this@MainActivity, R.color.ma60)
+//
+//            5 -> lineDataSetMa.colors = mMa5Colors
+//            10 -> lineDataSetMa.colors = mMa10Colors
+//            20 -> lineDataSetMa.colors = mMa20Colors
+//            30 -> lineDataSetMa.colors = mMa30Colors
+//            else -> lineDataSetMa.colors = mMa60Colors
         }
         lineDataSetMa.lineWidth = 1f
         lineDataSetMa.setDrawCircles(false)

@@ -228,7 +228,7 @@ public class Highlight {
             return false;
         else {
             if (this.mDataSetIndex == h.mDataSetIndex && this.mX == h.mX
-                    && this.mStackIndex == h.mStackIndex && this.mDataIndex == h.mDataIndex)
+                    && this.mStackIndex == h.mStackIndex && this.mDataIndex == h.mDataIndex && this.mTouchYValue == h.mTouchYValue)
                 return true;
             else
                 return false;

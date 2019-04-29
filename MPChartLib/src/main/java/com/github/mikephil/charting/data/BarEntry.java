@@ -33,6 +33,18 @@ public class BarEntry extends Entry {
      */
     private float mPositiveSum;
 
+    /** shadow-high value */
+    private float mShadowHigh = 0f;
+
+    /** shadow-low value */
+    private float mShadowLow = 0f;
+
+    /** close value */
+    private float mClose = 0f;
+
+    /** open value */
+    private float mOpen = 0f;
+
     /**
      * Constructor for normal bars (not stacked).
      *
@@ -76,6 +88,25 @@ public class BarEntry extends Entry {
     public BarEntry(float x, float y, Drawable icon, Object data) {
         super(x, y, icon, data);
     }
+
+    /**
+     * Constructor.
+     *
+     * @param xIndex The index on the x-axis.
+     * @param shadowH The (shadow) high value.
+     * @param shadowL The (shadow) low value.
+     * @param open The open value.
+     * @param close The close value.
+     */
+    public BarEntry(int xIndex, float shadowH, float shadowL, float open, float close, float val) {
+        super(val,xIndex);
+
+        this.mShadowHigh = shadowH;
+        this.mShadowLow = shadowL;
+        this.mOpen = open;
+        this.mClose = close;
+    }
+
 
     /**
      * Constructor for stacked bar entries. One data object for whole stack
@@ -220,6 +251,60 @@ public class BarEntry extends Entry {
 
         return remainder;
     }
+
+
+    /**
+     * Returns the upper shadows highest value.
+     *
+     * @return
+     */
+    public float getHigh() {
+        return mShadowHigh;
+    }
+
+    public void setHigh(float mShadowHigh) {
+        this.mShadowHigh = mShadowHigh;
+    }
+
+    /**
+     * Returns the lower shadows lowest value.
+     *
+     * @return
+     */
+    public float getLow() {
+        return mShadowLow;
+    }
+
+    public void setLow(float mShadowLow) {
+        this.mShadowLow = mShadowLow;
+    }
+
+    /**
+     * Returns the bodys close value.
+     *
+     * @return
+     */
+    public float getClose() {
+        return mClose;
+    }
+
+    public void setClose(float mClose) {
+        this.mClose = mClose;
+    }
+
+    /**
+     * Returns the bodys open value.
+     *
+     * @return
+     */
+    public float getOpen() {
+        return mOpen;
+    }
+
+    public void setOpen(float mOpen) {
+        this.mOpen = mOpen;
+    }
+
 
     /**
      * Reuturns the sum of all positive values this entry (if stacked) contains.

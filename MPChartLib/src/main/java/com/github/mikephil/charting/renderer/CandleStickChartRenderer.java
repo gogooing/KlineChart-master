@@ -58,6 +58,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
 
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
+        float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
         float barSpace = dataSet.getBarSpace();
         boolean showCandleBar = dataSet.getShowCandleBar();
@@ -81,6 +82,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
             final float close = e.getClose();
             final float high = e.getHigh();
             final float low = e.getLow();
+
 
             if (showCandleBar) {
                 // calculate the shadow
@@ -256,67 +258,161 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
     public void drawValues(Canvas c) {
 
         // if values are drawn
-        if (isDrawingValuesAllowed(mChart)) {
+//        if (isDrawingValuesAllowed(mChart)) {
 
-            List<ICandleDataSet> dataSets = mChart.getCandleData().getDataSets();
+        List<ICandleDataSet> dataSets = mChart.getCandleData().getDataSets();
 
-            for (int i = 0; i < dataSets.size(); i++) {
+        for (int i = 0; i < dataSets.size(); i++) {
 
-                ICandleDataSet dataSet = dataSets.get(i);
+            ICandleDataSet dataSet = dataSets.get(i);
 
-                if (!shouldDrawValues(dataSet) || dataSet.getEntryCount() < 1)
+            if (!shouldDrawValues(dataSet) || dataSet.getEntryCount() < 1)
+                continue;
+
+            // apply the text-styling defined by the DataSet
+            applyValueTextStyle(dataSet);
+
+            Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
+
+            mXBounds.set(mChart, dataSet);
+
+            float[] positions = trans.generateTransformedValuesCandle(
+                    dataSet, mAnimator.getPhaseX(), mAnimator.getPhaseY(), mXBounds.min, mXBounds.max);
+
+            float yOffset = Utils.convertDpToPixel(5f);
+
+            ValueFormatter formatter = dataSet.getValueFormatter();
+//
+//                for (int j = 0; j < positions.length; j += 2) {
+//
+//                    float x = positions[j];
+//                    float y = positions[j + 1];
+//
+//                    if (!mViewPortHandler.isInBoundsRight(x))
+//                        break;
+//
+//                    if (!mViewPortHandler.isInBoundsLeft(x) || !mViewPortHandler.isInBoundsY(y))
+//                        continue;
+//
+//                    CandleEntry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
+//
+//                    if (dataSet.isDrawValuesEnabled()) {
+//                        drawValue(c, formatter.getCandleLabel(entry), x, y - yOffset, dataSet.getValueTextColor(j / 2));
+//                    }
+//
+//                    if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
+//
+//                        Drawable icon = entry.getIcon();
+//
+//                        Utils.drawImage(
+//                                c,
+//                                icon,
+//                                (int)(x + iconsOffset.x),
+//                                (int)(y + iconsOffset.y),
+//                                icon.getIntrinsicWidth(),
+//                                icon.getIntrinsicHeight());
+//                    }
+//                }
+//
+//                MPPointF.recycleInstance(iconsOffset);
+//            }
+            /**
+             * 只显示最大最小值
+             */
+            //计算最大值和最小值
+            float maxValue = 0, minValue = 0;
+            int maxIndex = 0, minIndex = 0;
+            CandleEntry maxEntry = null, minEntry = null;
+            boolean isFirst = true;
+            for (int j = 0; j < positions.length; j += 2) {
+
+                float x = positions[j];
+                float y = positions[j + 1];
+
+                if (!mViewPortHandler.isInBoundsRight(x))
+                    break;
+
+                if (!mViewPortHandler.isInBoundsLeft(x) || !mViewPortHandler.isInBoundsY(y))
                     continue;
 
-                // apply the text-styling defined by the DataSet
-                applyValueTextStyle(dataSet);
+                CandleEntry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
 
-                Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
+                if (isFirst) {
+                    isFirst = false;
+                    maxValue = entry.getHigh();
+                    minValue = entry.getLow();
+                    maxEntry = entry;
+                    minEntry = entry;
+                } else {
+                    if (entry.getHigh() > maxValue) {
+                        maxValue = entry.getHigh();
+                        maxIndex = j;
+                        maxEntry = entry;
+                    }
 
-                mXBounds.set(mChart, dataSet);
+                    if (entry.getLow() < minValue) {
+                        minValue = entry.getLow();
+                        minIndex = j;
+                        minEntry = entry;
+                    }
 
-                float[] positions = trans.generateTransformedValuesCandle(
-                        dataSet, mAnimator.getPhaseX(), mAnimator.getPhaseY(), mXBounds.min, mXBounds.max);
+                }
+            }
 
-                float yOffset = Utils.convertDpToPixel(5f);
-
-                ValueFormatter formatter = dataSet.getValueFormatter();
-
-                MPPointF iconsOffset = MPPointF.getInstance(dataSet.getIconsOffset());
-                iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x);
-                iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y);
-
-                for (int j = 0; j < positions.length; j += 2) {
-
-                    float x = positions[j];
-                    float y = positions[j + 1];
-
-                    if (!mViewPortHandler.isInBoundsRight(x))
-                        break;
-
-                    if (!mViewPortHandler.isInBoundsLeft(x) || !mViewPortHandler.isInBoundsY(y))
-                        continue;
-
-                    CandleEntry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
+            float x = positions[minIndex];
+            if (minEntry != null) {
+                if (maxIndex > minIndex) {
+                    //画右边
+                    String highString = "← " + formatter.getCandleLabelByValue(minValue);
+                    int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
+                    float[] tPosition = new float[2];
+                    tPosition[1] = minValue;
+                    trans.pointValuesToPixel(tPosition);
 
                     if (dataSet.isDrawValuesEnabled()) {
-                        drawValue(c, formatter.getCandleLabel(entry), x, y - yOffset, dataSet.getValueTextColor(j / 2));
+                        drawValue(c, highString, x + highStringWidth / 2, tPosition[1] + yOffset, dataSet.getValueTextColor(minIndex / 2));
                     }
+                } else {
+                    //画左边
+                    String highString = formatter.getCandleLabelByValue(minValue) + " →";
 
-                    if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
-
-                        Drawable icon = entry.getIcon();
-
-                        Utils.drawImage(
-                                c,
-                                icon,
-                                (int)(x + iconsOffset.x),
-                                (int)(y + iconsOffset.y),
-                                icon.getIntrinsicWidth(),
-                                icon.getIntrinsicHeight());
+                    //计算显示位置
+                    int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
+                    float[] tPosition = new float[2];
+                    tPosition[1] = minValue;
+                    trans.pointValuesToPixel(tPosition);
+                    if (dataSet.isDrawValuesEnabled()) {
+                        drawValue(c, highString, x - highStringWidth / 2, tPosition[1] + yOffset, dataSet.getValueTextColor(minIndex / 2));
                     }
                 }
+            }
 
-                MPPointF.recycleInstance(iconsOffset);
+            if (maxEntry != null) {
+                if (maxIndex > minIndex) {
+                    //画右边
+                    String highString = formatter.getCandleLabelByValue(maxValue) + " →";
+                    int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
+                    float[] tPosition = new float[2];
+                    tPosition[0] = maxEntry == null ? 0f : maxEntry.getX();
+                    tPosition[1] = maxEntry == null ? 0f : maxEntry.getHigh();
+                    trans.pointValuesToPixel(tPosition);
+
+                    if (dataSet.isDrawValuesEnabled()) {
+                        drawValue(c, highString, tPosition[0] - highStringWidth / 2, tPosition[1], dataSet.getValueTextColor(minIndex / 2));
+                    }
+                } else {
+                    //画左边
+                    String highString = "← " + formatter.getCandleLabelByValue(maxValue);
+                    //计算显示位置
+                    int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
+                    float[] tPosition = new float[2];
+                    tPosition[0] = maxEntry == null ? 0f : maxEntry.getX();
+                    tPosition[1] = maxEntry == null ? 0f : maxEntry.getHigh();
+                    trans.pointValuesToPixel(tPosition);
+                    if (dataSet.isDrawValuesEnabled()) {
+                        drawValue(c, highString, tPosition[0] + highStringWidth / 2, tPosition[1], dataSet.getValueTextColor(minIndex / 2));
+                    }
+                }
             }
         }
     }

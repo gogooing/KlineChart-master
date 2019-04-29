@@ -103,7 +103,12 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     /**
      * Sets the minimum offset (padding) around the chart, defaults to 15
      */
-    protected float mMinOffset = 15.f;
+    protected float mMinOffset = 5.f;
+
+    /**
+     * Sets the minimum offset (padding) around the chart, defaults to 15
+     */
+    protected float mMinOffsetLeftOrRight = 5.f;
 
     /**
      * flag indicating if the chart should stay at the same position after a rotation. Default is false.
@@ -510,12 +515,14 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
             offsetLeft += getExtraLeftOffset();
 
             float minOffset = Utils.convertDpToPixel(mMinOffset);
+            float minOffsetLR = Utils.convertDpToPixel(mMinOffsetLeftOrRight);
 
             mViewPortHandler.restrainViewPort(
-                    Math.max(minOffset, offsetLeft),
+                    Math.max(minOffsetLR, offsetLeft),
                     Math.max(minOffset, offsetTop),
-                    Math.max(minOffset, offsetRight),
+                    Math.max(minOffsetLR, offsetRight),
                     Math.max(minOffset, offsetBottom));
+
 
             if (mLogEnabled) {
                 Log.i(LOG_TAG, "offsetLeft: " + offsetLeft + ", offsetTop: " + offsetTop
@@ -1264,6 +1271,20 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      */
     public void setMinOffset(float minOffset) {
         mMinOffset = minOffset;
+    }
+
+    /**
+     * Gets the minimum offset (padding) around the chart, defaults to 15.f
+     */
+    public float getMinOffsetLR() {
+        return mMinOffsetLeftOrRight;
+    }
+
+    /**
+     * Sets the minimum offset (padding) around the chart, defaults to 15.f
+     */
+    public void setMinOffsetLR(float minOffset) {
+        mMinOffsetLeftOrRight = minOffset;
     }
 
     /**

@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.github.mikephil.charting.charts.CombinedChart
+    <com.loro.klinechart.chart.MyCombinedChart
         android:id="@+id/volumeChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
