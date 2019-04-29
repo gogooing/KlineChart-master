@@ -1,10 +1,12 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.interfaces.datasets.ILineScatterCandleRadarDataSet;
+import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 /**
@@ -59,5 +61,37 @@ public abstract class LineScatterCandleRadarRenderer extends BarLineScatterCandl
 
             c.drawPath(mHighlightLinePath, mHighlightPaint);
         }
+    }
+
+
+    /**
+     * Draws vertical & horizontal highlight-lines if enabled.
+     *
+     * @param c
+     * @param pts the transformed x- and y-position of the lines
+     */
+    protected void drawHighlightLines(Canvas c, float[] pts) {
+
+        // set color and stroke-width
+        mHighlightPaint.setColor(Color.BLACK);
+        mHighlightPaint.setStrokeWidth(Utils.convertDpToPixel(10f));
+
+        // draw highlighted lines (if enabled)
+        mHighlightPaint.setPathEffect(null);
+
+
+        // create vertical path
+        mHighlightLinePath.reset();
+        mHighlightLinePath.moveTo(pts[0], mViewPortHandler.contentTop());
+        mHighlightLinePath.lineTo(pts[0], mViewPortHandler.contentBottom());
+
+        c.drawPath(mHighlightLinePath, mHighlightPaint);
+
+        // create horizontal path
+        mHighlightLinePath.reset();
+        mHighlightLinePath.moveTo(mViewPortHandler.contentLeft(), pts[1]);
+        mHighlightLinePath.lineTo(mViewPortHandler.contentRight(), pts[1]);
+
+        c.drawPath(mHighlightLinePath, mHighlightPaint);
     }
 }

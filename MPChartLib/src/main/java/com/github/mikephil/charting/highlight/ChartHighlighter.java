@@ -42,6 +42,7 @@ public class ChartHighlighter<T extends BarLineScatterCandleBubbleDataProvider> 
         Highlight high = getHighlightForX(xVal, x, y);
 
         high.setTouchY(y);
+        high.setTouchX(x);
         high.setTouchYValue(yValue);
 
         return high;

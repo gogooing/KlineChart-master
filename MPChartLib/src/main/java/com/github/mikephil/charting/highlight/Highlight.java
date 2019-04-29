@@ -64,6 +64,7 @@ public class Highlight {
      * 手指点击的区域
      */
     private float mTouchY;
+    private float mTouchX;
 
     private float mTouchYValue;
 
@@ -71,6 +72,13 @@ public class Highlight {
     public Highlight(float x, float y, int dataSetIndex) {
         this.mX = x;
         this.mY = y;
+        this.mDataSetIndex = dataSetIndex;
+    }
+
+    public Highlight(float x, float y, int dataIndex, int dataSetIndex) {
+        this.mX = x;
+        this.mY = y;
+        this.mDataIndex = dataIndex;
         this.mDataSetIndex = dataSetIndex;
     }
 
@@ -246,8 +254,16 @@ public class Highlight {
         return mTouchY;
     }
 
+    public float getTouchX() {
+        return mTouchX;
+    }
+
     public void setTouchY(float touchY) {
         this.mTouchY = touchY;
+    }
+
+    public void setTouchX(float touchX) {
+        this.mTouchX = touchX;
     }
 
 

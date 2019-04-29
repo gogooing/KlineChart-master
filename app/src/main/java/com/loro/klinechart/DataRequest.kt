@@ -27,7 +27,7 @@ object DataRequest {
         return ""
     }
 
-    fun getALL(context: Context): MutableList<KLineEntity> {
+    fun getALL(context: Context, complete: ((maxVolume: Float) -> Unit)?): MutableList<KLineEntity> {
         if (datas == null) {
             datas = try {
                 val data = Gson().fromJson<MutableList<KLineEntity>>(
@@ -35,7 +35,9 @@ object DataRequest {
                     object : TypeToken<MutableList<KLineEntity>>() {
                     }.type
                 )
-                DataHelper.calculate(data)
+                DataHelper.calculate(data)?.apply {
+                    complete?.invoke(this)
+                }
                 data
             } catch (e: Exception) {
                 e.printStackTrace()

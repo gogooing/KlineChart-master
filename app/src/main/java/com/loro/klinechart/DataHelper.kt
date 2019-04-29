@@ -259,22 +259,24 @@ object DataHelper {
      *
      * @param dataList
      */
-    fun calculate(dataList: List<KLineEntity>) {
+    fun calculate(dataList: List<KLineEntity>): Float {
         calculateMA(dataList)
         calculateMACD(dataList)
         calculateBOLL(dataList)
         calculateRSI(dataList)
         calculateKDJ(dataList)
         calculateWR(dataList)
-        calculateVolumeMA(dataList)
+        return calculateVolumeMA(dataList)
     }
 
-    private fun calculateVolumeMA(entries: List<KLineEntity>) {
+    private fun calculateVolumeMA(entries: List<KLineEntity>): Float {
         var volumeMa5 = 0f
         var volumeMa10 = 0f
-
+        var maxVolume = 0f
         for (i in entries.indices) {
             val entry = entries[i]
+
+            maxVolume = Math.max(entry.volume, maxVolume)
 
             volumeMa5 += entry.volume
             volumeMa10 += entry.volume
@@ -297,5 +299,6 @@ object DataHelper {
                 else -> entry.MA10Volume = Float.NaN
             }
         }
+        return maxVolume
     }
 }

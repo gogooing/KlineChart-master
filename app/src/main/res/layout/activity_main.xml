@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".MainActivity">
 
-
-    <com.github.mikephil.charting.charts.CombinedChart
-        android:id="@+id/klineChart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="15dp"
-        app:layout_constraintBottom_toTopOf="@id/volumeChart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.loro.klinechart.chart.MyCombinedChart
-        android:id="@+id/volumeChart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/klineChart" />
+            android:id="@+id/klineChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintVertical_weight="2"
+            app:layout_constraintBottom_toTopOf="@id/volumeChart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.loro.klinechart.chart.MyCombinedChart
+            android:id="@+id/volumeChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintVertical_weight="1"
+            app:layout_constraintBottom_toTopOf="@id/indexChart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/klineChart"/>
+
+    <com.loro.klinechart.chart.MyCombinedChart
+            android:id="@+id/indexChart"
+            android:layout_width="match_parent"
+            app:layout_constraintVertical_weight="1"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/volumeChart"/>
 
 
 </android.support.constraint.ConstraintLayout>

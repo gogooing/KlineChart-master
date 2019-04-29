@@ -492,7 +492,10 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
 
             setHighlightDrawPos(high, mBarRect);
 
-            c.drawRect(mBarRect, mHighlightPaint);
+            /*重写高亮*/
+            c.drawLine(mBarRect.centerX(), mViewPortHandler.getContentRect().bottom, mBarRect.centerX(), 0, mHighlightPaint);
+
+//            c.drawRect(mBarRect, mHighlightPaint);
         }
     }
 

@@ -99,7 +99,7 @@ public class BarEntry extends Entry {
      * @param close The close value.
      */
     public BarEntry(int xIndex, float shadowH, float shadowL, float open, float close, float val) {
-        super(val,xIndex);
+        super(xIndex,val);
 
         this.mShadowHigh = shadowH;
         this.mShadowLow = shadowL;

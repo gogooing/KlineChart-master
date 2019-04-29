@@ -448,7 +448,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
             float highValue = e.getHigh() * mAnimator.getPhaseY();
             float y = (lowValue + highValue) / 2f;
 
-            MPPointD pix = mChart.getTransformer(set.getAxisDependency()).getPixelForValues(e.getX(), y);
+            MPPointD pix = mChart.getTransformer(set.getAxisDependency()).getPixelForValues(e.getX(), high.getTouchYValue());
 
             high.setDraw((float) pix.x, (float) pix.y);
 

@@ -31,6 +31,8 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
@@ -70,6 +72,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * flag that indicates if logging is enabled or not
      */
     protected boolean mLogEnabled = false;
+
+    private boolean hasHighlightlongTime = true;
 
     /**
      * object that holds all data that was originally set for the chart, before
@@ -336,10 +340,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             return true;
         else {
 
-            if (mData.getEntryCount() <= 0)
-                return true;
-            else
-                return false;
+            return (mData.getEntryCount() <= 0);
         }
     }
 
@@ -552,7 +553,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Highlights any y-value at the given x-value in the given DataSet.
      * Provide -1 as the dataSetIndex to undo all highlighting.
      * This method will call the listener.
-     * @param x The x-value to highlight
+     *
+     * @param x            The x-value to highlight
      * @param dataSetIndex The dataset index to search in
      */
     public void highlightValue(float x, int dataSetIndex) {
@@ -563,8 +565,9 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Highlights the value at the given x-value and y-value in the given DataSet.
      * Provide -1 as the dataSetIndex to undo all highlighting.
      * This method will call the listener.
-     * @param x The x-value to highlight
-     * @param y The y-value to highlight. Supply `NaN` for "any"
+     *
+     * @param x            The x-value to highlight
+     * @param y            The y-value to highlight. Supply `NaN` for "any"
      * @param dataSetIndex The dataset index to search in
      */
     public void highlightValue(float x, float y, int dataSetIndex) {
@@ -574,7 +577,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * Highlights any y-value at the given x-value in the given DataSet.
      * Provide -1 as the dataSetIndex to undo all highlighting.
-     * @param x The x-value to highlight
+     *
+     * @param x            The x-value to highlight
      * @param dataSetIndex The dataset index to search in
      * @param callListener Should the listener be called for this change
      */
@@ -585,8 +589,9 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * Highlights any y-value at the given x-value in the given DataSet.
      * Provide -1 as the dataSetIndex to undo all highlighting.
-     * @param x The x-value to highlight
-     * @param y The y-value to highlight. Supply `NaN` for "any"
+     *
+     * @param x            The x-value to highlight
+     * @param y            The y-value to highlight. Supply `NaN` for "any"
      * @param dataSetIndex The dataset index to search in
      * @param callListener Should the listener be called for this change
      */
@@ -757,6 +762,18 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     }
 
     /**
+     * Returns the actual position in pixels of the MarkerView for the given
+     * Highlight object.
+     *
+     * @param high
+     * @return
+     */
+    protected float[] getMarkerPosition(Entry e,Highlight high) {
+        return new float[]{high.getTouchX(), high.getTouchY()};
+    }
+
+
+    /**
      * ################ ################ ################ ################
      * ANIMATIONS ONLY WORK FOR API LEVEL 11 (Android 3.0.x) AND HIGHER.
      */
@@ -846,7 +863,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @param durationMillisX
      * @param durationMillisY
-     * @param easing         a custom easing function to be used on the animation phase
+     * @param easing          a custom easing function to be used on the animation phase
      */
     @RequiresApi(11)
     public void animateXY(int durationMillisX, int durationMillisY, EasingFunction easing) {
@@ -986,6 +1003,10 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public OnChartGestureListener getOnChartGestureListener() {
         return mGestureListener;
+    }
+
+    public boolean isHighlightEnabled() {
+        return mData == null ? true : mData.isHighlightEnabled();
     }
 
     /**
@@ -1467,7 +1488,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @return returns true on success, false on error
      */
     public boolean saveToPath(String title, String pathOnSD) {
-
 
 
         Bitmap b = getChartBitmap();

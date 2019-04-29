@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
+import android.util.Log;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -11,6 +12,7 @@ import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.loro.klinechart.bean.KLineEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by loro on 2019/4/26.
@@ -19,7 +21,9 @@ public class MyCombinedChart extends CombinedChart {
     private MyLeftMarkerView myMarkerViewLeft;
     private MyHMarkerView myMarkerViewH;
     private MyBottomMarkerView myBottomMarkerView;
-    private List<KLineEntity> mDatas;
+    private Map<Float, String> mDatas;
+
+    private String mTag = "";
 
     public MyCombinedChart(Context context) {
         super(context);
@@ -33,19 +37,23 @@ public class MyCombinedChart extends CombinedChart {
         super(context, attrs, defStyle);
     }
 
-    public void setMarker(MyLeftMarkerView markerLeft, MyHMarkerView markerH, List<KLineEntity> datas) {
+    public void setChartTag(String tag) {
+        this.mTag = tag;
+    }
+
+    public void setMarker(MyLeftMarkerView markerLeft, MyHMarkerView markerH, Map<Float, String> datas) {
         this.myMarkerViewLeft = markerLeft;
         this.myMarkerViewH = markerH;
         this.mDatas = datas;
     }
 
-    public void setMarker(MyLeftMarkerView markerLeft, MyBottomMarkerView markerBottom, List<KLineEntity> datas) {
+    public void setMarker(MyLeftMarkerView markerLeft, MyBottomMarkerView markerBottom, Map<Float, String> datas) {
         this.myMarkerViewLeft = markerLeft;
         this.myBottomMarkerView = markerBottom;
         this.mDatas = datas;
     }
 
-    public void setMarker(MyLeftMarkerView markerLeft, MyBottomMarkerView markerBottom, MyHMarkerView markerH, List<KLineEntity> datas) {
+    public void setMarker(MyLeftMarkerView markerLeft, MyBottomMarkerView markerBottom, MyHMarkerView markerH, Map<Float, String> datas) {
         this.myMarkerViewLeft = markerLeft;
         this.myBottomMarkerView = markerBottom;
         this.myMarkerViewH = markerH;
@@ -65,6 +73,9 @@ public class MyCombinedChart extends CombinedChart {
             IDataSet set = mData.getDataSetByHighlight(highlight);
 
             Entry e = mData.getEntryForHighlight(highlight);
+
+            if ("volumeChart" == mTag)
+                Log.e("onValueSelected", "pos = ");
             if (e == null)
                 continue;
 
@@ -76,9 +87,14 @@ public class MyCombinedChart extends CombinedChart {
 
             float[] pos = getMarkerPosition(highlight);
 
+            if ("volumeChart" == mTag)
+                Log.e("onValueSelected", "pos = " + pos);
             // check bounds
             if (!mViewPortHandler.isInBounds(pos[0], pos[1]))
                 continue;
+
+            if ("volumeChart" == mTag)
+                Log.e("onValueSelected", "touchY = " + mIndicesToHighlight[i].getTouchY());
 
             if (null != myMarkerViewH) {
                 myMarkerViewH.refreshContent(e, mIndicesToHighlight[i]);
@@ -91,7 +107,7 @@ public class MyCombinedChart extends CombinedChart {
                 myMarkerViewH.draw(canvas, mViewPortHandler.contentLeft(), mIndicesToHighlight[i].getTouchY() - myMarkerViewH.getHeight() / 2);
             }
 
-            if (null != myMarkerViewLeft) {
+            if (null != myMarkerViewLeft && mIndicesToHighlight[i].getTouchY() >= 0) {
                 //修改标记值
                 float yValForHighlight = mIndicesToHighlight[i].getTouchYValue();
                 myMarkerViewLeft.setData(yValForHighlight);
@@ -108,8 +124,7 @@ public class MyCombinedChart extends CombinedChart {
             }
 
             if (null != myBottomMarkerView) {
-                String time = "xxx";
-                myBottomMarkerView.setData(time);
+                myBottomMarkerView.setData(mDatas.get(mIndicesToHighlight[i].getX()));
                 myBottomMarkerView.refreshContent(e, mIndicesToHighlight[i]);
 
                 myBottomMarkerView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
